@@ -19,13 +19,23 @@ export function Home() {
             placeholder="Escreva aqui sua tarefa"
             id="task"
             type="text"
+            list="task-suggestions"
           />
+
+          <datalist id="task-suggestions">
+            <option value="Projeto 1"></option>
+            <option value="Projeto 2"></option>
+            <option value="Projeto 3"></option>
+          </datalist>
 
           <label htmlFor="minutesDuration">durante</label>
           <MinutesAmountInput
             placeholder="00"
             id="minutesDuration"
             type="number"
+            step={5}
+            min={5}
+            max={60}
           />
 
           <span>minutos</span>
