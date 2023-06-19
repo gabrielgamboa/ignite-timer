@@ -31,6 +31,7 @@ interface Cycle {
   minutesAmount: number
   startDate: Date
   interruptedDate?: Date
+  finishedDate?: Date
 }
 
 export function Home() {
@@ -47,14 +48,31 @@ export function Home() {
   })
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
   useEffect(() => {
     let interval: number
     if (activeCycle) {
       interval = setInterval(() => {
-        setAmountSecondsPassed(
-          differenceInSeconds(new Date(), activeCycle.startDate),
+        const secondsPassed = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate,
         )
+
+        if (secondsPassed >= totalSeconds) {
+          setCycles(
+            cycles.map((cycle) =>
+              cycle.id === activeCycleId
+                ? { ...cycle, finishedDate: new Date() }
+                : cycle,
+            ),
+          )
+
+          setAmountSecondsPassed(totalSeconds)
+          clearInterval(interval)
+        } else {
+          setAmountSecondsPassed(secondsPassed)
+        }
       }, 1000)
     }
 
@@ -92,7 +110,6 @@ export function Home() {
     setActiveCycleId(null)
   }
 
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
@@ -109,8 +126,6 @@ export function Home() {
 
   const task = watch('task')
   const isSubmitDisable = !task
-
-  console.log(cycles)
 
   return (
     <HomeContainer>
