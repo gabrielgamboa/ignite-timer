@@ -52,6 +52,8 @@ export function CyclesContextProvider({
           : cycle,
       ),
     )
+
+    setActiveCycleId(null)
   }
 
   function createNewCycle(data: CreateCycleData) {
@@ -67,8 +69,6 @@ export function CyclesContextProvider({
     setCycles((state) => [...state, newCycle])
     setActiveCycleId(id)
     setAmountSecondsPassed(0)
-
-    // reset() // volta para os valores colocados no defaultValues
   }
 
   function interruptCurrentCycle() {
