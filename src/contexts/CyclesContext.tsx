@@ -41,26 +41,36 @@ export function CyclesContextProvider({
 }: CyclesContextProviderProps) {
   const [cyclesState, dispatch] = useReducer(
     (state: CycleState, action: any) => {
-      if (action.type === 'ADD_NEW_CYCLE') {
-        return {
-          ...state,
-          cycles: [...state.cycles, action.payload.newCycle],
-          activeCycleId: action.payload.newCycle.id,
-        }
+      switch (action.type) {
+        case 'ADD_NEW_CYCLE':
+          return {
+            ...state,
+            cycles: [...state.cycles, action.payload.newCycle],
+            activeCycleId: action.payload.newCycle.id,
+          }
+        case 'INTERRUPT_CURRENT_CYCLE':
+          return {
+            ...state,
+            activeCycleId: null,
+            cycles: state.cycles.map((cycle) =>
+              cycle.id === state.activeCycleId
+                ? { ...cycle, interruptedDate: new Date() }
+                : cycle,
+            ),
+          }
+        case 'MARK_CURRENT_CYCLE_AS_FINISHED':
+          return {
+            ...state,
+            activeCycleId: null,
+            cycles: state.cycles.map((cycle) =>
+              cycle.id === state.activeCycleId
+                ? { ...cycle, finishedDate: new Date() }
+                : cycle,
+            ),
+          }
+        default:
+          return state
       }
-
-      if (action.type === 'INTERRUPT_CURRENT_CYCLE') {
-        return {
-          ...state,
-          activeCycleId: null,
-          cycles: state.cycles.map((cycle) =>
-            cycle.id === state.activeCycleId
-              ? { ...cycle, interruptedDate: new Date() }
-              : cycle,
-          ),
-        }
-      }
-      return state
     },
     {
       cycles: [],
@@ -85,15 +95,6 @@ export function CyclesContextProvider({
         activeCycleId,
       },
     })
-    // setCycles(
-    //   cycles.map((cycle) =>
-    //     cycle.id === activeCycleId
-    //       ? { ...cycle, finishedDate: new Date() }
-    //       : cycle,
-    //   ),
-    // )
-
-    setActiveCycleId(null)
   }
 
   function createNewCycle(data: CreateCycleData) {
@@ -105,8 +106,6 @@ export function CyclesContextProvider({
       minutesAmount: data.minutesAmount,
       startDate: new Date(),
     }
-
-    // setCycles((state) => [...state, newCycle])
 
     dispatch({
       type: 'ADD_NEW_CYCLE',
