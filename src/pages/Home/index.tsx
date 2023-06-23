@@ -61,7 +61,6 @@ export function Home() {
           <StartCountdownButton disabled={isSubmitDisable} type="submit">
             <Play size={24} />
             Começar
-            <span>Preencha os campos antes de submeter</span>
           </StartCountdownButton>
         )}
       </form>
